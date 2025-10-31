@@ -59,9 +59,13 @@ export default function AddFoodPage() {
     const user_id = localStorage.getItem("userId");
     if (!user_id) {
       setError("User not found. Please log in again.");
+      console.error("No user_id found in localStorage.");
       router.push("/login");
       return;
     }
+
+    console.log("Submitting form with user_id:", user_id);
+    console.log("Form data:", formData);
 
     try {
       let imageUrl: string | null = null;
@@ -69,17 +73,27 @@ export default function AddFoodPage() {
       if (image) {
         const fileExt = image.name.split(".").pop();
         const fileName = `${user_id}_${Date.now()}.${fileExt}`;
+
+        console.log("Uploading image to Supabase:", fileName);
+
         const { error: uploadError } = await supabase.storage
           .from("food_bk")
           .upload(fileName, image);
-        if (uploadError) throw uploadError;
+
+        if (uploadError) {
+          console.error("Supabase upload error:", uploadError);
+          throw uploadError;
+        }
+
         const { data: publicUrlData } = supabase.storage
           .from("food_bk")
           .getPublicUrl(fileName);
+
         imageUrl = publicUrlData.publicUrl;
+        console.log("Image uploaded, public URL:", imageUrl);
       }
 
-      await addDoc(collection(firebasedb, "food"), {
+      const docRef = await addDoc(collection(firebasedb, "food"), {
         user_id,
         meal_name: mealName,
         meal_type: mealType,
@@ -89,10 +103,12 @@ export default function AddFoodPage() {
         updated_at: serverTimestamp(),
       });
 
+      console.log("Firestore document added with ID:", docRef.id);
+
       alert("Meal added successfully!");
       router.push("/dashboard");
     } catch (err) {
-      console.error(err);
+      console.error("Error adding meal:", err);
       setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
       setLoading(false);
