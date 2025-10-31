@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { client } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { firebasedb } from "@/lib/firebaseConfig";
 import {
   collection,

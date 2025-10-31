@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { client } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { firebasedb } from "@/lib/firebaseConfig";
 
@@ -80,7 +80,7 @@ export default function EditFoodPage() {
     const filePath = `foods/${fileName}`;
     const { error: uploadError } = await client.storage.from("food_bk").upload(filePath, file);
     if (uploadError) throw new Error("ไม่สามารถอัปโหลดรูปภาพได้");
-    const { data } = client.storage.from("food_bk").getPublicUrl(filePath);
+    const { data } = supabase.storage.from("food_bk").getPublicUrl(filePath);
     return data.publicUrl;
   };
 
@@ -99,7 +99,7 @@ export default function EditFoodPage() {
       if (imageFile) {
         if (formData.image_url) {
           const filePath = formData.image_url.split("/").slice(-2).join("/");
-          await client.storage.from("food_bk").remove([filePath]);
+          await supabase.storage.from("food_bk").remove([filePath]);
         }
         imageUrl = await uploadImage(imageFile);
       }

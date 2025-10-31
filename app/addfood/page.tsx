@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { firebasedb } from "@/lib/firebaseConfig";
-import { client } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function AddFoodPage() {
