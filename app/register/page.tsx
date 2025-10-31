@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { firebasedb } from "@/lib/firebaseConfig";
-import { supabase } from "@/lib/supabaseClient";
+import { client } from "@/lib/supabaseClient";
 
 export default function RegisterPage() {
   const router = useRouter();
