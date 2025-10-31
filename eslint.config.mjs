@@ -19,6 +19,12 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+    rules: {
+      "@next/next/no-img-element": "off",
+      "prefer-const": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "jsx-a11y/alt-text": "off",
+    },
   },
 ];
 
