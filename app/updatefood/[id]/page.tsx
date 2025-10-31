@@ -78,7 +78,7 @@ export default function EditFoodPage() {
     const fileExt = file.name.split(".").pop();
     const fileName = `${id}_${Date.now()}.${fileExt}`;
     const filePath = `foods/${fileName}`;
-    const { error: uploadError } = await client.storage.from("food_bk").upload(filePath, file);
+    const { error: uploadError } = await supabase.storage.from("food_bk").upload(filePath, file);
     if (uploadError) throw new Error("ไม่สามารถอัปโหลดรูปภาพได้");
     const { data } = supabase.storage.from("food_bk").getPublicUrl(filePath);
     return data.publicUrl;
