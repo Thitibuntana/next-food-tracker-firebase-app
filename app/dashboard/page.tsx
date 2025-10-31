@@ -11,7 +11,6 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
   deleteDoc,
   doc,
   getDoc,
@@ -56,16 +55,14 @@ export default function DashboardPage() {
           setUser({ id: userSnap.id, ...userSnap.data() } as User);
         }
 
-        const q = query(
-          collection(firebasedb, "food"),
-          where("user_id", "==", userId),
-          orderBy("date", "desc")
-        );
+        const q = query(collection(firebasedb, "food"), where("user_id", "==", userId));
         const snapshot = await getDocs(q);
-        const foodList = snapshot.docs.map((docSnap) => ({
+        let foodList = snapshot.docs.map((docSnap) => ({
           id: docSnap.id,
           ...docSnap.data(),
         })) as Food[];
+
+        foodList.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
         setFoods(foodList);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -122,10 +119,7 @@ export default function DashboardPage() {
         {user && (
           <div className="relative">
             <img
-              src={
-                user.user_image_url ||
-                "https://placehold.co/60x60/000000/FFFFFF?text=User"
-              }
+              src={user.user_image_url || "https://placehold.co/60x60/000000/FFFFFF?text=User"}
               alt="Profile"
               className="w-14 h-14 rounded-full border-2 border-green-400 cursor-pointer"
               onClick={() => setShowProfile(true)}
@@ -138,20 +132,13 @@ export default function DashboardPage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
           <div className="bg-green-900 p-8 rounded-xl w-full max-w-sm text-center shadow-2xl">
             <img
-              src={
-                user.user_image_url ||
-                "https://placehold.co/120x120/000000/FFFFFF?text=User"
-              }
+              src={user.user_image_url || "https://placehold.co/120x120/000000/FFFFFF?text=User"}
               alt="User"
               className="w-24 h-24 mx-auto rounded-full border-2 border-green-400 mb-4"
             />
-            <h2 className="text-xl font-semibold text-green-400">
-              {user.fullname || "No name"}
-            </h2>
+            <h2 className="text-xl font-semibold text-green-400">{user.fullname || "No name"}</h2>
             <p className="text-gray-300 mt-2">{user.email}</p>
-            <p className="text-gray-300 mt-1">
-              Gender: {user.gender || "Unspecified"}
-            </p>
+            <p className="text-gray-300 mt-1">Gender: {user.gender || "Unspecified"}</p>
             <div className="mt-6 flex flex-col gap-3">
               <button
                 onClick={() => router.push(`/profile/${user.id}`)}
@@ -212,10 +199,7 @@ export default function DashboardPage() {
                   <td className="px-4 py-4">{food.date || "-"}</td>
                   <td className="px-4 py-4">
                     <img
-                      src={
-                        food.image_url ||
-                        "https://placehold.co/100x100/000000/FFFFFF?text=Food"
-                      }
+                      src={food.image_url || "https://placehold.co/100x100/000000/FFFFFF?text=Food"}
                       alt={food.meal_name || "Food"}
                       className="w-[50px] h-[50px] rounded-lg object-cover"
                     />
@@ -240,10 +224,7 @@ export default function DashboardPage() {
               ))
             ) : (
               <tr>
-                <td
-                  colSpan={5}
-                  className="py-8 text-center text-gray-400 text-lg"
-                >
+                <td colSpan={5} className="py-8 text-center text-gray-400 text-lg">
                   No meals found. Add a new one!
                 </td>
               </tr>
